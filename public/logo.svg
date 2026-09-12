@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 70" fill="none">
+  <!-- Elegant Arch Icon -->
+  <g transform="translate(10, 8)">
+    <path d="M27 4C14.2975 4 4 14.2975 4 27V48H50V27C50 14.2975 39.7025 4 27 4Z" stroke="#B89B5E" stroke-width="2" stroke-miterlimit="10"/>
+    <path d="M27 10C17.6112 10 10 17.6112 10 27V44H44V27C44 17.6112 36.3888 10 27 10Z" stroke="#B89B5E" stroke-width="1.2" stroke-opacity="0.6"/>
+    <!-- Palace / Lotus Crown Motif -->
+    <path d="M27 16L29.5 22.5L36 24L30.5 28.5L32.5 35L27 31.5L21.5 35L23.5 28.5L18 24L24.5 22.5L27 16Z" fill="#B89B5E"/>
+    <circle cx="27" cy="40" r="2" fill="#B89B5E"/>
+    <!-- Base line -->
+    <line x1="0" y1="51" x2="54" y2="51" stroke="#B89B5E" stroke-width="2"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="75" y="33" font-family="'Playfair Display', Georgia, serif" font-size="22" font-weight="600" letter-spacing="4" fill="#171717">AARAMBH</text>
+  <text x="76" y="49" font-family="'Inter', sans-serif" font-size="9" font-weight="500" letter-spacing="4.5" fill="#B89B5E">BANQUETS &amp; EVENTS</text>
+</svg>

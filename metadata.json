@@ -1,0 +1,6 @@
+{
+  "name": "Aarambh Banquets",
+  "description": "A premium banquet venue for weddings, receptions, engagements, birthdays and celebrations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
