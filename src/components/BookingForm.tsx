@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Calendar, CheckCircle2, AlertCircle, Send, MessageCircle, RefreshCw } from 'lucide-react';
+import { Sparkles, Calendar, CheckCircle2, AlertCircle, MessageCircle, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { websiteData } from '../data/websiteData';
 import { BookingFormData } from '../types';
@@ -21,6 +21,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialEventType = '' 
   const [errors, setErrors] = useState<Partial<Record<keyof BookingFormData, string>>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   // Update event type if initialEventType changes from outside
   React.useEffect(() => {
@@ -46,17 +47,30 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialEventType = '' 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
+    setSubmitError('');
 
-    // Simulate submission / validation delay
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const response = await fetch('/__forms.html', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(e.currentTarget) as unknown as Record<string, string>).toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error('Form submission failed');
+      }
+
       setIsSubmitted(true);
-    }, 600);
+    } catch {
+      setSubmitError('We could not send your enquiry. Please try again or contact us on WhatsApp.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -69,6 +83,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialEventType = '' 
       message: '',
     });
     setErrors({});
+    setSubmitError('');
     setIsSubmitted(false);
   };
 
@@ -149,7 +164,21 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialEventType = '' 
               </div>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+            <form
+              name="booking-enquiry"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              onSubmit={handleSubmit}
+              noValidate
+              className="space-y-6"
+            >
+              <input type="hidden" name="form-name" value="booking-enquiry" />
+              <p className="hidden" aria-hidden="true">
+                <label>
+                  Leave this field empty: <input name="bot-field" tabIndex={-1} autoComplete="off" />
+                </label>
+              </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {/* Name */}
                 <div>
@@ -219,6 +248,9 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialEventType = '' 
                     onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
                     className="w-full px-4 py-3 rounded-md bg-[#F8F5EF] border border-[#E6DECE] text-[#171717] text-sm focus:outline-none focus:border-[#B89B5E] focus:ring-1 focus:ring-[#B89B5E] transition-all"
                   >
+                    {!['Wedding', 'Reception', 'Engagement / Roka', 'Birthday / Milestone', 'Corporate Gala', 'Family Function', 'Other Celebration'].includes(formData.eventType) && (
+                      <option value={formData.eventType}>{formData.eventType}</option>
+                    )}
                     <option value="Wedding">Wedding</option>
                     <option value="Reception">Reception</option>
                     <option value="Engagement / Roka">Engagement / Roka</option>
@@ -283,6 +315,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialEventType = '' 
 
               {/* Submit CTA */}
               <div className="pt-2">
+                {submitError && (
+                  <p role="alert" className="mb-3 text-sm text-red-600 flex items-center justify-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    {submitError}
+                  </p>
+                )}
                 <button
                   type="submit"
                   disabled={isSubmitting}
